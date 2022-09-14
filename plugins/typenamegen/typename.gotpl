@@ -1,0 +1,33 @@
+{{ $root := . }}
+
+func SetTypenameRecursively[T any](x T) T {
+	switch val := any(x).(type) {
+		{{- range $model := .Objects}}
+			{{- range  $i, $e  := .Implements }}
+				{{- if eq $i 0 }}
+					case {{goModelName $model.Name}}:
+					val.Typename = "{{ goModelName $model.Name }}"
+					{{- range $field := $model.Fields}}
+						{{- if index $root.Interfaces $field.TypeReference.Definition.Name}}
+							if val.{{$field.GoFieldName}} != nil {
+								val.{{$field.GoFieldName}} = SetTypenameRecursively(val.{{$field.GoFieldName}})
+							}
+						{{- end}}
+					{{- end}}
+					return any(val).(T)
+				{{ end}}
+			{{- end}}
+		{{- end}}
+		{{- range $interface := .Interfaces}}
+			case []{{goModelName $interface.Name}}:
+				for i, e := range val {
+					e = SetTypenameRecursively(e)
+					val[i] = e
+				}
+			return any(val).(T)
+		{{- end}}
+
+		default:
+			return any(val).(T)
+	}
+}

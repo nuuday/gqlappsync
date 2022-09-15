@@ -71,7 +71,7 @@ models:
 ```
 
 4. Generate models
-   `go run github.com/nuuday/gqlappsync`
+    `go run github.com/nuuday/gqlappsync`
 
 5. Import and use the models in the lambdas
 
@@ -109,8 +109,8 @@ func main() {
 
 ## Working with interfaces and unions in AppSync and GO
 
-Appsync can't differentiate between interface implementations or unions unless the **typename field is provided with the name of the type.
-Therefore all graphql types that implement an interface or are part of a union will have a Typename field generated with a `json:"**typename"`-tag. Currently, Go doesn't support custom default values, so the Typename field has to be assigned through the `SetTypenameRecursively(x)`method.
+Appsync can't differentiate between interface implementations or unions unless the __typename field is provided with the name of the type.
+Therefore all graphql types that implement an interface or are part of a union will have a Typename field generated with a `json:"__typename"`-tag. Currently, Go doesn't support custom default values, so the Typename field has to be assigned through the `SetTypenameRecursively(x)`method.
 
 ```go
 package main
@@ -151,7 +151,7 @@ func main() {
 ```
 
 ### Tip: Middleware
-If the handler returns an interface that is implemented by a number of types that each is invoking the `SetTypenameRecursively(x)`method, you could instead move the invocation to a lambda middleware.
+If the handler returns an interface that is implemented by a number of types that each would require invoking the `SetTypenameRecursively(x)`method, you could instead move the invocation to a lambda middleware.
 
 ```go
 func handler(ctx context.Context) (generated.Book, error) {

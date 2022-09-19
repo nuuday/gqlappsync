@@ -1,0 +1,21 @@
+schema:
+  - test/schema.graphql
+model:
+  filename: generated/models_gen.go
+  package: generated
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  AWSDateTime:
+    model:
+      - github.com/99designs/gqlgen/graphql.Time

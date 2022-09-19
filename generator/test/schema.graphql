@@ -1,0 +1,28 @@
+type Library {
+  books: [Book!]!
+}
+
+interface Book {
+  title: String!
+  author: Author!
+}
+
+type TextBook implements Book {
+  title: String!
+  author: Author!
+  supplementaryMaterial: [MediaItem!]!
+}
+
+type Author {
+  name: String!
+}
+
+union MediaItem = AudioClip | VideoClip
+
+type AudioClip {
+  duration: Int!
+}
+
+type VideoClip {
+  previewURL: String!
+}

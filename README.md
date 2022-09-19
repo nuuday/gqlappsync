@@ -39,7 +39,7 @@ type Author {
 
 ```yaml
 # gqlgen.yml
-# Where are all the schema files located? globals are supported eg  src/**/*.graphqls
+# Where are all the schema file located?
 schema:
   - ./schema.graphql
 
@@ -71,7 +71,9 @@ models:
 ```
 
 4. Generate models
-    `go run github.com/nuuday/gqlappsync`
+   `go run github.com/nuuday/gqlappsync`
+   
+   The `--config 'path'` flag can be added to specify the path to the `gqlgen.yml`-filename
 
 5. Import and use the models in the lambdas
 
@@ -107,7 +109,7 @@ func main() {
 }
 ```
 
-## Working with interfaces and unions in AppSync and GO
+## Working with interfaces and unions in AppSync and Go
 
 Appsync can't differentiate between interface implementations or unions unless the __typename field is provided with the name of the type.
 Therefore all graphql types that implement an interface or are part of a union will have a Typename field generated with a `json:"__typename"`-tag. Currently, Go doesn't support custom default values, so the Typename field has to be assigned through the `SetTypenameRecursively(x)`method.
@@ -123,24 +125,17 @@ import (
 
 func handler(ctx context.Context) ([]generated.Book, error) {
   books := []generated.Book{ // Book is an interface
-    generated.Textbook{ // Textbook is an implementation of the interface 
+    generated.TextBook{// Textbook is an implementation of the interface
       Title: "Clean Code",
       Author: &generated.Author{
         Name: "Robert Cecil Martin",
       },
-      Courses: []*generated.Course{{
-        Name: "CS",
-      }},
-    },
-    generated.ColoringBook{ // ColoringBook is an implementation of the interface
-      Title: "The Coloring book",
-      Author: &generated.Author{
-        Name: "Uncle Bob Martin",
+      SupplementaryMaterial: []generated.MediaItem{
+        generated.AudioClip{
+          Duration: 120,
+        }
       },
-      Colors: []string{
-        "Yellow", "Blue", "Rainbow",
-      },
-    },
+    }
   }
   return generated.SetTypenameRecursively(books), nil // This is required for Appsync to know which type is being returned.
 }
@@ -151,15 +146,13 @@ func main() {
 ```
 
 ### Tip: Middleware
+
 If the handler returns an interface that is implemented by a number of types that each would require invoking the `SetTypenameRecursively(x)`method, you could instead move the invocation to a lambda middleware.
 
 ```go
 func handler(ctx context.Context) (generated.Book, error) {
   if foo {
     return generated.Textbook{...}, nil
-  }
-  if bar {
-    return generated.ColoringBook{...}, nil
   }
   return generated.CookingBook{...}, nil
 }
@@ -168,7 +161,7 @@ type handlerFunc func(context.Context) (generated.Book, error)
 func SetTypename(f handlerFunc) handlerFunc {
   return func(ctx context.Context) (generated.Book, error) {
     response, err := f(ctx)
-    response = generated.SetTypenameRecursively(response) // The invocation 
+    response = generated.SetTypenameRecursively(response) // The invocation
     return response, err
   }
 }

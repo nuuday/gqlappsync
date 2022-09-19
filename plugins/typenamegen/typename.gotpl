@@ -1,33 +1,46 @@
-{{ $root := . }}
+{{reserveImport "reflect"}}
+{{$root := .}}
 
 func SetTypenameRecursively[T any](x T) T {
 	switch val := any(x).(type) {
-		{{- range $model := .Objects}}
-			{{- range  $i, $e  := .Implements }}
-				{{- if eq $i 0 }}
-					case {{goModelName $model.Name}}:
-					val.Typename = "{{ goModelName $model.Name }}"
-					{{- range $field := $model.Fields}}
-						{{- if index $root.Interfaces $field.TypeReference.Definition.Name}}
+	{{range $model := .Objects}}
+		{{if or	(index $root.TypenamesDirectlyOrIndirectlyConnectedToAnInterface $model.Definition.Name) (gt (len $model.Implements) 0)}}
+			{{- range $typePrefix := $root.TypePrefixes}}
+				case {{$typePrefix}}{{goModelName $model.Name}}:
+				{{- range $field := $model.Fields}}
+					{{- if or (index $root.Interfaces $field.TypeReference.Definition.Name) (index $root.TypenamesDirectlyOrIndirectlyConnectedToAnInterface $field.TypeReference.Definition.Name)}}
+						{{- if eq $field.Type.Elem nil}}
 							if val.{{$field.GoFieldName}} != nil {
 								val.{{$field.GoFieldName}} = SetTypenameRecursively(val.{{$field.GoFieldName}})
 							}
 						{{- end}}
+						{{- if not (eq $field.Type.Elem nil) }}
+							if val.{{$field.GoFieldName}} != nil {
+								for i, e := range val.{{$field.GoFieldName}} {
+									e = SetTypenameRecursively(e)
+									val.{{$field.GoFieldName}}[i] = e
+								}
+							}
+						{{- end}}
 					{{- end}}
-					return any(val).(T)
-				{{ end}}
+				{{- end}}
+				{{- if gt (len $model.Implements) 0 }}
+					val.Typename = "{{goModelName $model.Name}}"
+				{{- end}}
+				return any(val).(T)
 			{{- end}}
-		{{- end}}
-		{{- range $interface := .Interfaces}}
-			case []{{goModelName $interface.Name}}:
-				for i, e := range val {
-					e = SetTypenameRecursively(e)
-					val[i] = e
-				}
-			return any(val).(T)
-		{{- end}}
+		{{end}}
 
-		default:
+	{{end}}
+	{{range $key, $value := $root.Interfaces}}
+		case []{{$key}}:
+			for i, e := range val {
+				e = SetTypenameRecursively(e)
+				val[i] = e
+			}
 			return any(val).(T)
+	{{end}}
+	default:
+		return any(val).(T)
 	}
 }

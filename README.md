@@ -5,13 +5,6 @@
 GqlAppSync is a code-generating tool built on top of [gqlgen](https://github.com/99designs/gqlgen), where the server and resolvers have been removed.
 It was created to add strongly-typed models for [AWS AppSync](https://aws.amazon.com/appsync/).
 
-## Prerequisites
-
-1. Ensure Git is authorized to access https://github.com/nuuday/
-2. Add "github.com/nuuday" to the `GOPRIVATE` environment variable.
-   - powershell: `$env:GOPRIVATE = "github.com/nuuday"`
-   - linux: `export GOPRIVATE=github.com/nuuday`
-
 ## Quick start
 
 1. Get the latest version of GqlAppSync
@@ -33,6 +26,7 @@ type Author {
   name: String!
 }
 ```
+**Note:** Doesn't currently support underscore in type names
 
 3. Define a `gqlgen.yml` file.
    E.g.:

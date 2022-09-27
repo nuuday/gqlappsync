@@ -3,6 +3,8 @@
 
 func SetTypenameRecursively[T any](x T) T {
 	switch val := any(x).(type) {
+	case nil:
+		return x
 	{{range $model := .Objects}}
 		{{if or	(index $root.TypenamesDirectlyOrIndirectlyConnectedToAnInterface $model.Definition.Name) (gt (len $model.Implements) 0)}}
 			{{- range $typePrefix := $root.TypePrefixes}}

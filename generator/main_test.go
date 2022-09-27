@@ -45,6 +45,13 @@ func TestInterfaceImplementationWithUnion(t *testing.T) {
 		t.Fail()
 	}
 }
+func TestNilInterfaceImplementation(t *testing.T) {
+	var book generated.Book = nil
+	book = generated.SetTypenameRecursively(book)
+	if hasAnyEmptyTypename(book) {
+		t.Fail()
+	}
+}
 
 func TestStructWithFieldThatIsAnInterfaceImplementation(t *testing.T) {
 	var library generated.Library = generated.Library{

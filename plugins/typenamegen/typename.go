@@ -66,7 +66,7 @@ func (m *Plugin) GenerateCode(data *codegen.Data) error {
 
 func filename(pkgCfg config.PackageConfig) string {
 	dir := filepath.Dir(pkgCfg.Filename)
-	filename := filepath.Join(dir, "typenames_gen.go")
+	filename := filepath.Join(dir, "typenames.gen.go")
 	return filename
 }
 

@@ -39,7 +39,7 @@ schema:
 
 # Where should any generated models go?
 model:
-  filename: ./generated/models_gen.go
+  filename: ./generated/models.gen.go
   package: generated
 
 # This section declares type mapping between the GraphQL and go type systems

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nuuday/gqlappsync/generator/generated"
+	"github.com/nuuday/gqlappsync/generator/test"
 )
 
 func TestGoGenerator(t *testing.T) {
@@ -18,71 +18,71 @@ func TestGoGenerator(t *testing.T) {
 }
 
 func TestInterfaceImplementation(t *testing.T) {
-	var book generated.Book = generated.TextBook{
+	var book test.Book = test.TextBook{
 		Title: "Clean Code",
-		Author: &generated.Author{
+		Author: &test.Author{
 			Name: "Robert Cecil Martin",
 		},
 	}
-	book = generated.SetTypenameRecursively(book)
+	book = test.SetTypenameRecursively(book)
 	if hasAnyEmptyTypename(book) {
 		t.Fail()
 	}
 }
 func TestInterfaceImplementationWithUnion(t *testing.T) {
-	var book generated.Book = generated.TextBook{
+	var book test.Book = test.TextBook{
 		Title: "Clean Code",
-		Author: &generated.Author{
+		Author: &test.Author{
 			Name: "Robert Cecil Martin",
 		},
-		SupplementaryMaterial: []generated.MediaItem{generated.AudioClip{
+		SupplementaryMaterial: []test.MediaItem{test.AudioClip{
 			Duration: 120,
 		}},
 	}
 
-	book = generated.SetTypenameRecursively(book)
+	book = test.SetTypenameRecursively(book)
 	if hasAnyEmptyTypename(book) {
 		t.Fail()
 	}
 }
 func TestNilInterfaceImplementation(t *testing.T) {
-	var book generated.Book = nil
-	book = generated.SetTypenameRecursively(book)
+	var book test.Book = nil
+	book = test.SetTypenameRecursively(book)
 	if hasAnyEmptyTypename(book) {
 		t.Fail()
 	}
 }
 
 func TestStructWithFieldThatIsAnInterfaceImplementation(t *testing.T) {
-	var library generated.Library = generated.Library{
-		Books: []generated.Book{
-			generated.TextBook{
+	var library test.Library = test.Library{
+		Books: []test.Book{
+			test.TextBook{
 				Title: "Clean Code",
-				Author: &generated.Author{
+				Author: &test.Author{
 					Name: "Robert Cecil Martin",
 				},
 			},
 		},
 	}
 
-	library = generated.SetTypenameRecursively(library)
+	library = test.SetTypenameRecursively(library)
 	if hasAnyEmptyTypename(library) {
 		t.Fail()
 	}
 }
 func TestStructWithFieldThatIsAPointerInterfaceImplementation(t *testing.T) {
-	var library generated.Library = generated.Library{
-		Books: []generated.Book{
-			&generated.TextBook{
+	var library test.Library = test.Library{
+		Books: []test.Book{
+			&test.TextBook{
 				Title: "Clean Code",
-				Author: &generated.Author{
+				Author: &test.Author{
 					Name: "Robert Cecil Martin",
 				},
 			},
 		},
 	}
 
-	library = generated.SetTypenameRecursively(library)
+	library = test.SetTypenameRecursively(library)
 	if hasAnyEmptyTypename(library) {
 		t.Fail()
 	}
